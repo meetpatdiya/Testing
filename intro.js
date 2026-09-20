@@ -55,3 +55,12 @@ export async function ayncName(){
 export async function asyncError(){
   throw new Error("User Not Found")
 }
+
+export const normalMethod={
+  log(item){
+    console.log('hello; ',item)
+  },
+  async norm(hey){
+    return {name:hey}
+  }
+}

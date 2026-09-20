@@ -66,35 +66,27 @@ A testing framework bundles a test runner, assertion library, mocking tools, and
 
 ---
 
-## Walking through `intro.test.js`
+## Project Files Overview
 
-The file tests a small utility module (`intro.js`) and doubles as a tour of Vitest's core features.
+This repository serves as a practical guide and playground for testing with Vitest. Below is a short overview of what each file does:
 
-**Basic function testing** — `max`, `fizzBuzz`, `calculateAverage`, and `calculateFactorial` are tested with plain `expect(...).toBe(...)` calls, including edge cases like no arguments, empty arrays, and invalid input (negative numbers, strings).
+### Source Files (The Code Under Test)
+- **`intro.js`**: A collection of basic utility functions (math operations, async functions, objects) used to demonstrate foundational testing concepts.
+- **`userService.js`**: A real-world-style service file that interacts with external dependencies (database via `db.js`, HTTP requests via `axios`, file system via `fs/promises`, and native modules like `crypto`). It also includes a `LoggerClass` and an `apiConfig` object to demonstrate advanced class and nested object mocking.
+- **`db.js`**: A dummy database configuration and query file used as a dependency in `userService.js`.
 
-**Matchers beyond `toBe`** — the "Match Testing" block shows off a few other useful assertions:
+### Test Files (The Examples)
+- **`intro.test.js`**: A beginner-friendly test suite covering Vitest's core features. It demonstrates basic matchers (`toBe`, `toEqual`, `toThrow`), testing promises/async logic, and fundamental function mocking with `vi.fn()`.
+- **`intro2.test.js`**: An advanced test suite focusing on complex mocking scenarios. It covers:
+  - **Module Mocking**: Globally mocking external dependencies like `axios` and `fs/promises` using `vi.mock()`.
+  - **Partial Mocking**: Isolating module mocks for a single test using `vi.doMock()`.
+  - **Object & Class Mocking**: Spying on methods using `vi.spyOn()`, mocking class prototypes, and globally mocking constructors.
+  - **Fake Timers**: Controlling time using `vi.useFakeTimers()` to test `setTimeout` and `setInterval` without actually waiting.
 
-```js
-expect(getUser()).toEqual({ name: "Meet", age: 21 }); // deep equality for objects
-expect(getUser()).toHaveProperty("name");              // checks a key exists
-expect(() => throwError()).toThrow();                  // expects a function to throw
-```
+## Running the Tests
 
-**Async testing** — `ayncName()` and `asyncError()` show the three ways Vitest handles promises: `await`-ing the result directly, using `.resolves` for a value you expect to succeed, and `.rejects` for one you expect to fail with a specific error message.
-
-**Mocking with `vi.fn()`** — the biggest section. Mocks replace real (slow/expensive) dependencies with fake, trackable stand-ins. The file demonstrates:
-
-- Tracking calls: `toHaveBeenCalled`, `toHaveBeenCalledTimes`, `toHaveBeenCalledWith`
-- Faking return values: `mockReturnValue`, `mockResolvedValue`, `mockRejectedValue`
-- Faking entire behavior: `mockImplementation`, for both sync and async logic
-
-It ends with a combined, real-world-style example: a `registerUser` function that depends on `saveUser` and `sendEmail`. Both dependencies are mocked, and the test verifies not just the final result, but *how* those dependencies were called — a good pattern to copy for testing anything that talks to a database or external API.
-
-## Running the tests
+To run the test suite (Vitest runs in watch mode by default):
 
 ```bash
 npm test
 ```
-
----
-

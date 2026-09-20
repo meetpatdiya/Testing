@@ -21,6 +21,7 @@ import {
   throwError,
   ayncName,
   asyncError,
+  normalMethod,
 } from "./intro.js";
 
 describe("max", () => {
@@ -200,4 +201,33 @@ describe("Mock Functions", () => {
     expect(sendEmail).toHaveBeenCalledTimes(1);
     expect(sendEmail).toHaveBeenCalledWith("meet@gmail.com");
   });
+});
+
+// spy: it watches a exisitng function, it must be used on method of object not on normal function
+describe("Spy", () => {
+  it("normal", () => {
+    const spy = vi.spyOn(normalMethod, "log");
+    normalMethod.log(34);
+    expect(spy).toHaveBeenCalled();
+    expect(spy).toHaveBeenCalledWith(34);
+    spy.mockRestore();
+  });
+  it("async",async()=>{
+    const spy = vi.spyOn(normalMethod,"norm");
+    const out = await normalMethod.norm([1,2,3]);
+    expect(out).toStrictEqual({name:[1,2,3]});
+    expect(spy).toHaveBeenCalled();
+    spy.mockRestore()
+  })
+  it("mock result ", async () => {
+  const spy = vi
+    .spyOn(normalMethod, "norm")
+    .mockResolvedValue({
+      id: 10,
+      name: "Fake User"
+    });
+  const user = await normalMethod.norm()
+  expect(user.name).toBe("Fake User");
+  spy.mockRestore();
+});
 });
