@@ -1,11 +1,9 @@
-// Lesson: Writing your first tests
 export function max(a, b) {
   if (a > b) return a;
   else if (b > a) return b;
   return a;
 }
 
-// Exercise
 export function fizzBuzz(n) {
   if (n % 3 === 0 && n % 5 === 0) return "FizzBuzz";
   if (n % 3 === 0) return "Fizz";
@@ -63,4 +61,16 @@ export const normalMethod={
   async norm(hey){
     return {name:hey}
   }
+}
+
+export const getApi=()=>{
+  return process.env.API_KEY;
+}
+
+export function getCurrentDate() {
+  return Date.now();
+}
+
+export function createTrackingToken() {
+  return crypto.randomUUID();
 }

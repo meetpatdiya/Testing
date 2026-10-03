@@ -1,0 +1,9 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`snapshot > name snapshot 1`] = `
+{
+  "age": 21,
+  "city": "Ahmedabad",
+  "name": "Meet Soni",
+}
+`;

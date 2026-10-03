@@ -5,7 +5,7 @@ import {
   vi,
 } from "vitest";
 import { getUser, getName, readUserConfig, generateApiKey, apiConfig, LoggerClass } from "./userService.js";
-import { normalMethod } from "./intro.js";
+import { normalMethod, getApi, getCurrentDate, createTrackingToken, max,fizzBuzz } from "./intro.js";
 import db from "./db.js";
 import axios from "axios";
 import fs from "fs/promises";
@@ -74,7 +74,7 @@ describe("object/classes mocking", () => {
     const result = await normalMethod.norm("test user");
     expect(result).toEqual({ name: "mocked obj" });
     expect(spy).toHaveBeenCalledWith("test user");
-    spy.mockRestore(); 
+    spy.mockRestore();
   });
 
   it("2. Nested object mocks", () => {
@@ -86,7 +86,7 @@ describe("object/classes mocking", () => {
   });
 
   it("3. Mocking a class method via prototype", () => {
-    const spy = vi.spyOn(LoggerClass.prototype, 'logInfo').mockImplementation(() => {});
+    const spy = vi.spyOn(LoggerClass.prototype, 'logInfo').mockImplementation(() => { });
     const logger = new LoggerClass();
     logger.logInfo("test message");
     expect(spy).toHaveBeenCalledWith("test message");
@@ -98,7 +98,7 @@ describe("object/classes mocking", () => {
       const actual = await importOriginal();
       return {
         ...actual,
-        LoggerClass: vi.fn().mockImplementation(function() {
+        LoggerClass: vi.fn().mockImplementation(function () {
           return {
             logInfo: vi.fn().mockReturnValue("completely mocked logger")
           };
@@ -108,7 +108,7 @@ describe("object/classes mocking", () => {
 
     const { LoggerClass: MockedLogger } = await import("./userService.js");
     const logger = new MockedLogger();
-    
+
     expect(logger.logInfo()).toBe("completely mocked logger");
     vi.doUnmock("./userService.js");
   });
@@ -143,3 +143,58 @@ describe("fake timers", () => {
     vi.useRealTimers();
   })
 })
+
+describe("mock environments", () => {
+  it("get api key", () => {
+    vi.stubEnv("API_KEY", "mocked-key");
+    expect(getApi()).toBe("mocked-key");
+    vi.unstubAllEnvs()
+  })
+  it("gets current time", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2023-01-01"));
+    expect(getCurrentDate()).toEqual(new Date("2023-01-01").getTime());
+    vi.useRealTimers();
+  })
+  it("creates tracking token", () => {
+    vi.stubGlobal("crypto", {
+      randomUUID: () => "test-uuid-123"
+    });
+
+    expect(createTrackingToken()).toBe("test-uuid-123");
+
+    vi.unstubAllGlobals();
+  });
+  it("Maths", () => {
+    const randomSpy = vi
+      .spyOn(Math, "random")
+      .mockReturnValue(0.5);
+
+    expect(Math.random()).toBe(0.5);
+
+    randomSpy.mockRestore();
+  })
+})
+
+describe("parameterized testing", () => {
+  it.each([[1, 2, 2], [10, 5, 10], [-1, -2, -1]])("max", (a, b, expected) => {
+    expect(max(a, b)).toBe(expected)
+  })
+  it.each([[5, "Buzz"], [15, "FizzBuzz"], [3, "Fizz"], [1, "1"]])("fizzBuzz", (input, expected) => {
+    expect(fizzBuzz(input)).toBe(expected)
+  })
+})
+describe("snapshot",()=>{
+  it("name snapshot",()=>{
+    const result = {
+      name:"Meet Soni",
+      age:21,
+      city:"Ahmedabad"
+    }
+    expect(result).toMatchSnapshot();
+  })
+})
+console.log("Coverage Test")
+console.log("npx vitest --coverage");
+  // This command is used to check how much code was actually executed by my tests
+  // You must test all branches of a func in if(){}else{}
