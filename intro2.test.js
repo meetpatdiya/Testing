@@ -20,6 +20,7 @@ describe("module mocking", () => {
   it("gets user", async () => {
     db.query.mockResolvedValue([[{ id: 1, name: "meet" }]])
     const user = await getUser(1);
+    console.log("hello",user)
     expect(user).toEqual({ id: 1, name: "meet" });
     expect(db.query).toHaveBeenCalledWith('select * from users where id = 1');
   })
